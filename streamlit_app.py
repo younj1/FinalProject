@@ -97,24 +97,32 @@ with tab2:
         )
         st.plotly_chart(scatter_fig2)
 
-    # Correlation Heatmap: Numeric Features
     st.markdown("### Correlation Heatmap: Numeric Features")
+    # Generate the correlation matrix and handle potential NaN values
     correlation_matrix = filtered_data.select_dtypes(include=["float64", "int64"]).corr()
 
-    # Convert the correlation matrix to a NumPy array
+    # Check for NaN values and replace them with zeros
+    if correlation_matrix.isnull().values.any():
+        st.warning("Correlation matrix contains NaN values. These will be replaced with zeros.")
+        correlation_matrix = correlation_matrix.fillna(0)
+
+    # Convert to a NumPy array for compatibility with px.imshow
     correlation_matrix_array = correlation_matrix.to_numpy()
 
-    # Use px.imshow to plot the heatmap correctly
-    fig = px.imshow(
-        correlation_matrix_array,
-        color_continuous_scale="coolwarm",
-        title="Correlation Heatmap",
-        labels={'x': 'Features', 'y': 'Features'},
-        x=correlation_matrix.columns,
-        y=correlation_matrix.index
-    )
-
-    st.plotly_chart(fig)
+    # Create the heatmap using Plotly Express
+    try:
+        fig = px.imshow(
+            correlation_matrix_array,
+            color_continuous_scale="coolwarm",  # Ensure this is a valid colorscale
+            title="Correlation Heatmap",
+            labels={'x': 'Features', 'y': 'Features'},
+            x=correlation_matrix.columns,
+            y=correlation_matrix.index,
+            aspect="auto"
+        )
+        st.plotly_chart(fig)
+    except ValueError as e:
+        st.error(f"Error generating the heatmap: {e}")
 
 # Tab 3: Lifestyle & Geography
 with tab3:
