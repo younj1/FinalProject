@@ -79,6 +79,7 @@ with tab1:
     st.dataframe(filtered_data[['age', 'bmi', 'charges', 'smoker', 'region']].head(10), height=300)
 
 # Tab 2: Drivers of Cost
+# Tab 2: Drivers of Cost
 with tab2:
     st.header("📈 Drivers of Insurance Costs")
     col1, col2 = st.columns(2)
@@ -107,8 +108,28 @@ with tab2:
         )
         st.plotly_chart(scatter_fig2)
 
-    st.markdown("### Correlation Heatmap: Numeric Features")
+    st.markdown("### Correlation Matrix: Numeric Features")
+    # Compute the correlation matrix for numerical columns
     correlation_matrix = filtered_data.select_dtypes(include=["float64", "int64"]).corr()
+
+    # Display the full correlation matrix
+    st.write(correlation_matrix)
+
+    # Create a heatmap for visualizing the correlation matrix using Plotly
+    try:
+        fig = px.imshow(
+            correlation_matrix,
+            color_continuous_scale='RdBu',  # Use a valid colorscale
+            title="Correlation Heatmap",
+            labels={'x': 'Features', 'y': 'Features'},
+            x=correlation_matrix.columns,
+            y=correlation_matrix.index,
+            aspect="auto"
+        )
+        st.plotly_chart(fig)
+    except ValueError as e:
+        st.error(f"Error generating the heatmap: {e}")
+
     
     # Create heatmap using Plotly Express with a valid colorscale
     try:
