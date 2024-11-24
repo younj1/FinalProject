@@ -68,7 +68,7 @@ with tab1:
     col3.metric("Average BMI", f"{filtered_data['bmi'].mean():.2f}")
     
     # Smoker vs Non-Smoker Distribution
-    st.markdown("### Smoker vs. Non-Smoker Distribution")
+    st.markdown("### Smoker vs. Non-Smoker Distribution ({len(filtered_data)} records")
     
     # Define color scheme based on the checkbox
     if include_smokers:
