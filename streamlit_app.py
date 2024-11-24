@@ -21,6 +21,7 @@ with st.sidebar:
         "Filter by Region", data["region"].unique(), default=data["region"].unique()
     )
     include_smokers = st.checkbox("Include Smokers Only", value=False)
+    include_nonsmokers = st.checkbox("Include Non-Smokers Only", value=False)
     age_range = st.slider("Age Range", int(data["age"].min()), int(data["age"].max()), (18, 60))
     theme = st.radio("Choose Theme", ["Light Theme", "Dark Theme"], index=0)
 
@@ -28,6 +29,9 @@ with st.sidebar:
 filtered_data = data[data["region"].isin(selected_region)]
 if include_smokers:
     filtered_data = filtered_data[filtered_data["smoker"] == "yes"]
+elif include_nonsmokers:
+    filtered_data = filtered_data[filtered_data["smoker"] == "no"]
+
 filtered_data = filtered_data[(
     filtered_data["age"] >= age_range[0]) & (filtered_data["age"] <= age_range[1])]
 
