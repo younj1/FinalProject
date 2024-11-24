@@ -10,38 +10,32 @@ st.set_page_config(page_title="Insurance Charges Dashboard", layout="wide")
 # Load Data
 @st.cache_data
 def load_data():
-    # Load both CSV files
-    df1 = pd.read_csv("https://raw.githubusercontent.com/rafiky1/ccd/refs/heads/main/insurance.csv")
-    df2 = pd.read_csv("https://raw.githubusercontent.com/younj1/FinalProject/refs/heads/main/healthcare_dataset.csv")
-    
-    return df1, df2
+    return pd.read_csv("https://raw.githubusercontent.com/rafiky1/ccd/refs/heads/main/insurance.csv")
 
-# Load the datasets
-data1, data2 = load_data()
+data = load_data()
 
 # Sidebar
 with st.sidebar:
     st.title("🔍 Filters")
     
     selected_region = st.multiselect(
-        "Filter by Region", data1["region"].unique(), default=data1["region"].unique()
+        "Filter by Region", data["region"].unique(), default=data["region"].unique()
     )
     
     # Include Smokers Only checkbox
     include_smokers = st.checkbox("Include Smokers Only", value=False)
-    include_nonsmokers = st.checkbox("Include Non-Smokers Only", value=False)
     
-    bmi_range = st.slider("Select BMI Range", min_value=int(data1['bmi'].min()), max_value=int(data1['bmi'].max()), value=(18, 30))
-    age_range = st.slider("Age Range", int(data1["age"].min()), int(data1["age"].max()), (18, 60))
+    include_nonsmokers = st.checkbox("Include Non-Smokers Only", value=False)
+    bmi_range = st.slider("Select BMI Range", min_value=int(data['bmi'].min()), max_value=int(data['bmi'].max()), value=(18, 30))
+    age_range = st.slider("Age Range", int(data["age"].min()), int(data["age"].max()), (18, 60))
     theme = st.radio("Choose Theme", ["Light Theme", "Dark Theme"], index=0)
 
 # Apply Filters
-filtered_data = data1[data1["region"].isin(selected_region)]
+filtered_data = data[data["region"].isin(selected_region)]
 
-# Handle Smoker and Non-Smoker Filters
+# Filter for smokers and non-smokers based on user selection
 if include_smokers and include_nonsmokers:
     st.warning("Please select either Smokers Only or Non-Smokers Only, not both.")
-    include_smokers = False  # Automatically uncheck one
 elif include_smokers:
     filtered_data = filtered_data[filtered_data["smoker"] == "yes"]
 elif include_nonsmokers:
@@ -77,7 +71,10 @@ with tab1:
     st.markdown("### Smoker vs. Non-Smoker Distribution")
     
     # Define color scheme based on the checkbox
-    color_map = {"yes": "red", "no": "blue"}
+    if include_smokers:
+        color_map = {"yes": "red", "no": "blue"}
+    else:
+        color_map = {"yes": "red", "no": "blue"}
     
     smoker_fig = px.pie(
         filtered_data,
@@ -91,7 +88,7 @@ with tab1:
 
     # Move the table to the bottom of the tab
     st.markdown("### Data Sample")
-    st.dataframe(filtered_data[['age', 'bmi', 'charges', 'smoker', 'region']].head(10), height=400)
+    st.dataframe(filtered_data[['age', 'bmi', 'charges', 'smoker', 'region']].head(10), height=300)
 
 # Tab 2: Drivers of Cost
 with tab2:
@@ -228,12 +225,7 @@ with tab4:
         x="Age Group",
         y="charges",
         color="Age Group",
-        title="Charges by Age Group",
-        labels={"Age Group": "Age Group", "charges": "Insurance Charges"},
+        title="Charges Distribution by Age Group",
         template=template,
     )
     st.plotly_chart(age_group_bar)
-
-# Display Columns of data2 at the bottom
-st.markdown("### Columns in the Healthcare Dataset (data2):")
-st.write(data2.columns)
