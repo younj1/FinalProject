@@ -28,16 +28,21 @@ with st.sidebar:
 filtered_data = data[data["region"].isin(selected_region)]
 if include_smokers:
     filtered_data = filtered_data[filtered_data["smoker"] == "yes"]
-filtered_data = filtered_data[
-    (filtered_data["age"] >= age_range[0]) & (filtered_data["age"] <= age_range[1])
-]
+filtered_data = filtered_data[(
+    filtered_data["age"] >= age_range[0]) & (filtered_data["age"] <= age_range[1])]
 
 # Set Theme
 template = "plotly_white" if theme == "Light Theme" else "plotly_dark"
 
 # Dashboard Title
 st.title("📊 Insurance Charges Dashboard")
-st.markdown("Dive into the story behind medical insurance costs! Learn how age, BMI, lifestyle choices, and geography shape your premiums.")
+st.markdown("""
+    Dive into the story behind medical insurance costs! Learn how age, BMI, lifestyle choices, and geography shape your premiums.
+    - **Age**: Premiums rise with age due to higher health risks.
+    - **BMI**: A higher BMI leads to higher premiums due to its association with medical conditions.
+    - **Lifestyle Choices**: Smokers face significantly higher premiums.
+    - **Geography**: Regional factors, such as local healthcare costs and lifestyle, influence premiums.
+""")
 
 # Tabs for Navigation
 tab1, tab2, tab3, tab4 = st.tabs(["Overview", "Drivers of Cost", "Lifestyle & Geography", "Regional Insights"])
@@ -58,6 +63,10 @@ with tab1:
         template=template,
     )
     st.plotly_chart(smoker_fig)
+
+    st.markdown("""
+    **Smoker vs. Non-Smoker**: Smokers face higher premiums due to the increased health risks associated with smoking. This is visible in the chart above, where premium distribution tends to be higher for smokers.
+    """)
 
 # Tab 2: Drivers of Cost
 with tab2:
@@ -93,9 +102,16 @@ with tab2:
     ax.set_title("Correlation Between Numeric Features")
     st.pyplot(fig)
 
+    st.markdown("""
+    **Correlation Between Features**: 
+    - There is a strong correlation between **age** and **charges**. As people get older, they tend to have higher premiums due to increased health risks.
+    - A moderate correlation exists between **BMI** and **charges**, indicating that individuals with higher BMI are more likely to pay higher premiums.
+    """)
+
 # Tab 3: Lifestyle & Geography
 with tab3:
     st.header("💡 Lifestyle Choices and Insurance Costs")
+    
     st.markdown("### Charges by Number of Children")
     children_bar = px.bar(
         filtered_data,
@@ -108,6 +124,10 @@ with tab3:
     )
     st.plotly_chart(children_bar)
 
+    st.markdown("""
+    **Charges by Number of Children**: Families with more children tend to have higher premiums due to the increased healthcare costs associated with larger families.
+    """)
+
     st.markdown("### Stacked Bar Chart: Charges by Region and Smoker Status")
     stacked_bar = px.bar(
         filtered_data,
@@ -119,6 +139,10 @@ with tab3:
         template=template,
     )
     st.plotly_chart(stacked_bar)
+
+    st.markdown("""
+    **Charges by Region and Smoker Status**: Geography plays a significant role in insurance premiums. Regions with higher healthcare costs tend to have higher premiums. Additionally, smokers generally face higher premiums across all regions.
+    """)
 
     st.markdown("### Charges by BMI Category")
     filtered_data["BMI Category"] = pd.cut(
@@ -137,6 +161,10 @@ with tab3:
     )
     st.plotly_chart(bmi_fig)
 
+    st.markdown("""
+    **Charges by BMI Category**: Higher BMI categories tend to have higher premiums. The **Obese** category shows the highest average charges, reflecting the increased health risks associated with obesity.
+    """)
+
 # Tab 4: Regional Insights
 with tab4:
     st.header("🌍 Regional Analysis")
@@ -151,6 +179,10 @@ with tab4:
     )
     st.plotly_chart(regional_fig)
 
+    st.markdown("""
+    **Charges by Region**: Insurance premiums vary by region. Some regions with higher living costs or healthcare infrastructure may have higher insurance charges.
+    """)
+
     st.markdown("### Heatmap: Charges by BMI Category and Region")
     heatmap_data = filtered_data.pivot_table(
         values="charges", index="region", columns="BMI Category", aggfunc="mean", fill_value=0
@@ -159,6 +191,10 @@ with tab4:
     sns.heatmap(heatmap_data, cmap="YlGnBu", annot=True, fmt=".2f", ax=ax)
     ax.set_title("Average Charges by Region and BMI Category")
     st.pyplot(fig)
+
+    st.markdown("""
+    **Charges by Region and BMI Category**: This heatmap shows how the average charges differ by region and BMI category. As expected, regions with higher healthcare costs tend to show higher charges, especially for individuals in the **Obese** BMI category.
+    """)
 
     st.markdown("### Grouped Bar Chart: Average Charges by Children and Smoker Status")
     grouped_data = filtered_data.groupby(["children", "smoker"])["charges"].mean().reset_index()
@@ -173,6 +209,10 @@ with tab4:
         template=template,
     )
     st.plotly_chart(grouped_bar)
+
+    st.markdown("""
+    **Charges by Children and Smoker Status**: Families with children who are smokers face significantly higher premiums. This reflects the combined impact of smoking and the added health risks associated with having dependents.
+    """)
 
     st.markdown("### Charges by Age Group")
     filtered_data["Age Group"] = pd.cut(
@@ -189,3 +229,7 @@ with tab4:
         template=template,
     )
     st.plotly_chart(age_group_bar)
+
+    st.markdown("""
+    **Charges by Age Group**: As people age, they typically experience higher premiums. This is especially noticeable in the **Older Adults (51-65)** and **Seniors (65+)** age groups, where premiums are at their highest due to health risks associated with aging.
+    """)
