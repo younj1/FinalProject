@@ -72,7 +72,7 @@ with tab1:
     
     # Define color scheme based on the checkbox
     if include_smokers:
-        color_map = {"yes": "red", "no": "red"}
+        color_map = {"yes": "red", "no": "blue"}
     else:
         color_map = {"yes": "red", "no": "blue"}
     
