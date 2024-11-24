@@ -1,7 +1,5 @@
 import streamlit as st
 import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
 import plotly.express as px
 
 # Page Configuration
@@ -11,7 +9,6 @@ st.set_page_config(page_title="Insurance Charges Dashboard", layout="wide")
 @st.cache_data
 def load_data():
     return pd.read_csv("https://raw.githubusercontent.com/rafiky1/ccd/refs/heads/main/insurance.csv")
-    return pd.read_csv("https://github.com/younj1/FinalProject/blame/859d0d7abbb22be3309cbb36088005e17c95c74c/healthcare_dataset.csv")
 
 data = load_data()
 
@@ -23,16 +20,20 @@ with st.sidebar:
         "Filter by Region", data["region"].unique(), default=data["region"].unique()
     )
     
-    # Include Smokers Only checkbox with custom styling
+    # Include Smokers Only checkbox
     include_smokers = st.checkbox("Include Smokers Only", value=False)
+    
+    # Conditional styling and indicator
     if include_smokers:
         st.markdown("""
             <style>
                 .stCheckbox>label>div:first-child {
                     background-color: red;
+                    color: white;
                 }
             </style>
         """, unsafe_allow_html=True)
+        st.markdown('<p style="color:red;">Smokers Only Filter is Activated!</p>', unsafe_allow_html=True)
     
     include_nonsmokers = st.checkbox("Include Non-Smokers Only", value=False)
     bmi_range = st.slider("Select BMI Range", min_value=int(data['bmi'].min()), max_value=int(data['bmi'].max()), value=(18, 30))
