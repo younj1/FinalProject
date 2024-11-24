@@ -72,13 +72,12 @@ with tab1:
         title=f"Smoker vs. Non-Smoker Distribution ({len(filtered_data)} records)",
         template=template,
     )
-    st.plotly_chart(smoker_fig)
+    st.plotly_chart(smoker_fig, use_container_width=True, key="smoker_dist")
 
     # Move the table to the bottom of the tab
     st.markdown("### Data Sample")
     st.dataframe(filtered_data[['age', 'bmi', 'charges', 'smoker', 'region']].head(10), height=300)
 
-# Tab 2: Drivers of Cost
 # Tab 2: Drivers of Cost
 with tab2:
     st.header("📈 Drivers of Insurance Costs")
@@ -94,7 +93,7 @@ with tab2:
             template=template,
             hover_data=["age", "charges"]
         )
-        st.plotly_chart(scatter_fig1)
+        st.plotly_chart(scatter_fig1, use_container_width=True, key="charges_vs_age")
     with col2:
         scatter_fig2 = px.scatter(
             filtered_data,
@@ -106,7 +105,7 @@ with tab2:
             template=template,
             hover_data=["bmi", "charges"]
         )
-        st.plotly_chart(scatter_fig2)
+        st.plotly_chart(scatter_fig2, use_container_width=True, key="charges_vs_bmi")
 
     st.markdown("### Correlation Matrix: Numeric Features")
     # Compute the correlation matrix for numerical columns
@@ -126,28 +125,7 @@ with tab2:
             y=correlation_matrix.index,
             aspect="auto"
         )
-        st.plotly_chart(fig)
-    except ValueError as e:
-        st.error(f"Error generating the heatmap: {e}")
-
-    
-    # Create heatmap using Plotly Express with a valid colorscale
-    try:
-        fig = px.imshow(
-            correlation_matrix,
-            color_continuous_scale='RdBu',  # Use a valid colorscale
-            title="Correlation Heatmap",
-            labels={'x': 'Features', 'y': 'Features'},
-            x=correlation_matrix.columns,
-            y=correlation_matrix.index,
-            aspect="auto"
-        )
-        st.plotly_chart(fig)
-
-        # Display correlation insights
-        correlation_description = correlation_matrix.unstack().sort_values(ascending=False)
-        st.markdown("### Top 5 Correlations")
-        st.write(correlation_description.head())
+        st.plotly_chart(fig, use_container_width=True, key="corr_heatmap")
     except ValueError as e:
         st.error(f"Error generating the heatmap: {e}")
 
@@ -164,7 +142,7 @@ with tab3:
         labels={"children": "Number of Children", "charges": "Insurance Charges"},
         template=template,
     )
-    st.plotly_chart(children_bar)
+    st.plotly_chart(children_bar, use_container_width=True, key="charges_by_children")
 
     st.markdown("### Stacked Bar Chart: Charges by Region and Smoker Status")
     stacked_bar = px.bar(
@@ -176,7 +154,7 @@ with tab3:
         barmode="stack",
         template=template,
     )
-    st.plotly_chart(stacked_bar)
+    st.plotly_chart(stacked_bar, use_container_width=True, key="charges_by_region_smoker")
 
     st.markdown("### Charges by BMI Category")
     filtered_data["BMI Category"] = pd.cut(
@@ -193,7 +171,7 @@ with tab3:
         labels={"BMI Category": "BMI Category", "charges": "Insurance Charges"},
         template=template,
     )
-    st.plotly_chart(bmi_fig)
+    st.plotly_chart(bmi_fig, use_container_width=True, key="charges_by_bmi")
 
 # Tab 4: Regional Insights
 with tab4:
@@ -207,7 +185,7 @@ with tab4:
         title="Charges Distribution by Region",
         template=template,
     )
-    st.plotly_chart(regional_fig)
+    st.plotly_chart(regional_fig, use_container_width=True, key="charges_by_region")
 
     st.markdown("### Heatmap: Charges by BMI Category and Region")
     heatmap_data = filtered_data.pivot_table(
@@ -216,7 +194,7 @@ with tab4:
     fig, ax = plt.subplots(figsize=(10, 6))
     sns.heatmap(heatmap_data, cmap="YlGnBu", annot=True, fmt=".2f", ax=ax)
     ax.set_title("Average Charges by Region and BMI Category")
-    st.pyplot(fig)
+    st.pyplot(fig, key="regional_heatmap")
 
     st.markdown("### Grouped Bar Chart: Average Charges by Children and Smoker Status")
     grouped_data = filtered_data.groupby(["children", "smoker"])["charges"].mean().reset_index()
@@ -230,7 +208,7 @@ with tab4:
         labels={"children": "Number of Children", "charges": "Insurance Charges"},
         template=template,
     )
-    st.plotly_chart(grouped_bar)
+    st.plotly_chart(grouped_bar, use_container_width=True, key="charges_by_children_smoker")
 
     st.markdown("### Charges by Age Group")
     filtered_data["Age Group"] = pd.cut(
@@ -246,4 +224,5 @@ with tab4:
         title="Charges Distribution by Age Group",
         template=template,
     )
-    st.plotly_chart(age_group_bar)
+    st.plotly_chart(age_group_bar, use_container_width=True, key="charges_by_age_group")
+
