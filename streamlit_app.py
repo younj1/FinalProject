@@ -79,7 +79,7 @@ with tab1:
     smoker_fig = px.pie(
         filtered_data,
         names="smoker",
-        title=f"Smoker vs. Non-Smoker Distribution ({len(filtered_data)} records)",
+        title=f"###Smoker vs. Non-Smoker Distribution ({len(filtered_data)} records)",
         template=template,
         color="smoker",
         color_discrete_map=color_map  # Apply the dynamic color map
