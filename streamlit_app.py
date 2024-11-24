@@ -11,17 +11,20 @@ st.set_page_config(page_title="Insurance Charges Dashboard", layout="wide")
 @st.cache_data
 def load_data():
     return pd.read_csv("https://raw.githubusercontent.com/rafiky1/ccd/refs/heads/main/insurance.csv")
-    return pd.read_csv("https://github.com/younj1/FinalProject/blame/859d0d7abbb22be3309cbb36088005e17c95c74c/healthcare_dataset.csv")
 
 data = load_data()
 
 # Sidebar
 with st.sidebar:
     st.title("🔍 Filters")
+    
     selected_region = st.multiselect(
         "Filter by Region", data["region"].unique(), default=data["region"].unique()
     )
+    
+    # Include Smokers Only checkbox
     include_smokers = st.checkbox("Include Smokers Only", value=False)
+    
     include_nonsmokers = st.checkbox("Include Non-Smokers Only", value=False)
     bmi_range = st.slider("Select BMI Range", min_value=int(data['bmi'].min()), max_value=int(data['bmi'].max()), value=(18, 30))
     age_range = st.slider("Age Range", int(data["age"].min()), int(data["age"].max()), (18, 60))
@@ -66,11 +69,20 @@ with tab1:
     
     # Smoker vs Non-Smoker Distribution
     st.markdown("### Smoker vs. Non-Smoker Distribution")
+    
+    # Define color scheme based on the checkbox
+    if include_smokers:
+        color_map = {"yes": "red", "no": "gray"}
+    else:
+        color_map = {"yes": "blue", "no": "green"}
+    
     smoker_fig = px.pie(
         filtered_data,
         names="smoker",
         title=f"Smoker vs. Non-Smoker Distribution ({len(filtered_data)} records)",
         template=template,
+        color="smoker",
+        color_discrete_map=color_map  # Apply the dynamic color map
     )
     st.plotly_chart(smoker_fig)
 
