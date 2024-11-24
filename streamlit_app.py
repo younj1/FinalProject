@@ -56,10 +56,16 @@ tab1, tab2, tab3, tab4 = st.tabs(["Overview", "Drivers of Cost", "Lifestyle & Ge
 # Tab 1: Overview
 with tab1:
     st.header("🚀 Overview")
+    
+    # Metrics in columns
     col1, col2, col3 = st.columns(3)
     col1.metric("Average Charges", f"${filtered_data['charges'].mean():,.2f}")
     col2.metric("Total Records", len(filtered_data))
     col3.metric("Average BMI", f"{filtered_data['bmi'].mean():.2f}")
+    
+    # Display a sample of the dataset in a table
+    st.markdown("### Data Sample")
+    st.dataframe(filtered_data[['age', 'bmi', 'charges', 'smoker', 'region']].head(10), height=300)
 
     st.markdown("### Smoker vs. Non-Smoker Distribution")
     smoker_fig = px.pie(
