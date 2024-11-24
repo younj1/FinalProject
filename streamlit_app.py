@@ -19,7 +19,7 @@ def load_data():
 # Load the datasets
 data1, data2 = load_data()
 
-# Debugging Step: Check column names of data2
+# Display the column names of data2 to verify the structure
 st.write("Columns in data2:", data2.columns)
 
 # Sidebar
@@ -231,32 +231,13 @@ with tab4:
         x="Age Group",
         y="charges",
         color="Age Group",
-        title="Charges Distribution by Age Group",
+        title="Charges by Age Group",
+        labels={"Age Group": "Age Group", "charges": "Insurance Charges"},
         template=template,
     )
     st.plotly_chart(age_group_bar)
 
-# Tab 5: Health Conditions (New Tab for data2)
-with st.expander("Health Condition Insights"):
-    st.header("💪 Health Conditions and Insurance Costs")
-
-    # Check if the health_condition column exists in data2
-    if 'health_condition' in data2.columns:
-        health_conditions = data2['health_condition'].unique()
-        selected_condition = st.selectbox("Select Health Condition", health_conditions, index=0)
-        
-        # Filter data2 based on selected health condition
-        filtered_data2 = data2[data2['health_condition'] == selected_condition]
-        
-        health_condition_bar = px.bar(
-            filtered_data2,
-            x="health_condition",
-            y="charges",
-            color="health_condition",
-            title=f"Charges by Health Condition ({len(filtered_data2)} records)",
-            labels={"charges": "Insurance Charges", "health_condition": "Health Condition"},
-            template=template,
-        )
-        st.plotly_chart(health_condition_bar)
-    else:
-        st.error("The 'health_condition' column does not exist in the dataset. Please check the dataset structure.")
+    # Display insights from regional data
+    st.markdown("### Regional Insights")
+    region_stats = filtered_data.groupby("region")[["charges"]].describe().reset_index()
+    st.dataframe(region_stats)
