@@ -98,22 +98,13 @@ with tab2:
         st.plotly_chart(scatter_fig2)
 
     st.markdown("### Correlation Heatmap: Numeric Features")
-    # Generate the correlation matrix and handle potential NaN values
     correlation_matrix = filtered_data.select_dtypes(include=["float64", "int64"]).corr()
-
-    # Check for NaN values and replace them with zeros
-    if correlation_matrix.isnull().values.any():
-        st.warning("Correlation matrix contains NaN values. These will be replaced with zeros.")
-        correlation_matrix = correlation_matrix.fillna(0)
-
-    # Convert to a NumPy array for compatibility with px.imshow
-    correlation_matrix_array = correlation_matrix.to_numpy()
-
-    # Create the heatmap using Plotly Express
+    
+    # Create heatmap using Plotly Express with a valid colorscale
     try:
         fig = px.imshow(
-            correlation_matrix_array,
-            color_continuous_scale="coolwarm",  # Ensure this is a valid colorscale
+            correlation_matrix,
+            color_continuous_scale='RdBu',  # Use a valid colorscale
             title="Correlation Heatmap",
             labels={'x': 'Features', 'y': 'Features'},
             x=correlation_matrix.columns,
