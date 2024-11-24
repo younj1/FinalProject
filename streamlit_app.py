@@ -18,10 +18,22 @@ data = load_data()
 # Sidebar
 with st.sidebar:
     st.title("🔍 Filters")
+    
     selected_region = st.multiselect(
         "Filter by Region", data["region"].unique(), default=data["region"].unique()
     )
+    
+    # Include Smokers Only checkbox with custom styling
     include_smokers = st.checkbox("Include Smokers Only", value=False)
+    if include_smokers:
+        st.markdown("""
+            <style>
+                .stCheckbox>label>div:first-child {
+                    background-color: red;
+                }
+            </style>
+        """, unsafe_allow_html=True)
+    
     include_nonsmokers = st.checkbox("Include Non-Smokers Only", value=False)
     bmi_range = st.slider("Select BMI Range", min_value=int(data['bmi'].min()), max_value=int(data['bmi'].max()), value=(18, 30))
     age_range = st.slider("Age Range", int(data["age"].min()), int(data["age"].max()), (18, 60))
