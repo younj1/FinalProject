@@ -63,10 +63,7 @@ with tab1:
     col2.metric("Total Records", len(filtered_data))
     col3.metric("Average BMI", f"{filtered_data['bmi'].mean():.2f}")
     
-    # Display a sample of the dataset in a table
-    st.markdown("### Data Sample")
-    st.dataframe(filtered_data[['age', 'bmi', 'charges', 'smoker', 'region']].head(10), height=300)
-
+    # Smoker vs Non-Smoker Distribution
     st.markdown("### Smoker vs. Non-Smoker Distribution")
     smoker_fig = px.pie(
         filtered_data,
@@ -75,6 +72,10 @@ with tab1:
         template=template,
     )
     st.plotly_chart(smoker_fig)
+
+    # Move the table to the bottom of the tab
+    st.markdown("### Data Sample")
+    st.dataframe(filtered_data[['age', 'bmi', 'charges', 'smoker', 'region']].head(10), height=300)
 
 # Tab 2: Drivers of Cost
 with tab2:
