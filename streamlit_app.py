@@ -33,9 +33,9 @@ filtered_data = data[data["region"].isin(selected_region)]
 if include_smokers and include_nonsmokers:
     st.warning("Please select either Smokers Only or Non-Smokers Only, not both.")
 elif include_smokers:
-    filtered_data = filtered_data[filtered_data["smoker"] == "yes"]
+    filtered_data = filtered_data[filtered_data["Smoker "] == " Yes"]
 elif include_nonsmokers:
-    filtered_data = filtered_data[filtered_data["smoker"] == "no"]
+    filtered_data = filtered_data[filtered_data["Smoker "] == " No"]
 
 # Filter by BMI range
 filtered_data = filtered_data[(filtered_data['bmi'] >= bmi_range[0]) & (filtered_data['bmi'] <= bmi_range[1])]
