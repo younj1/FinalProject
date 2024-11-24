@@ -22,8 +22,10 @@ with st.sidebar:
     )
     include_smokers = st.checkbox("Include Smokers Only", value=False)
     include_nonsmokers = st.checkbox("Include Non-Smokers Only", value=False)
+    bmi_range = st.slider("Select BMI Range", min_value=int(data['bmi'].min()), max_value=int(data['bmi'].max()), value=(18, 30))
     age_range = st.slider("Age Range", int(data["age"].min()), int(data["age"].max()), (18, 60))
-    theme = st.radio("Choose Theme", ["Light Theme", "Dark Theme"], index=0)
+    gender = st.selectbox("Select Gender", ["All", "Male", "Female"])
+    
 
 # Apply Filters
 filtered_data = data[data["region"].isin(selected_region)]
