@@ -19,9 +19,6 @@ def load_data():
 # Load the datasets
 data1, data2 = load_data()
 
-# Display the column names of data2 to verify the structure
-st.write("Columns in data2:", data2.columns)
-
 # Sidebar
 with st.sidebar:
     st.title("🔍 Filters")
@@ -237,7 +234,6 @@ with tab4:
     )
     st.plotly_chart(age_group_bar)
 
-    # Display insights from regional data
-    st.markdown("### Regional Insights")
-    region_stats = filtered_data.groupby("region")[["charges"]].describe().reset_index()
-    st.dataframe(region_stats)
+# Display Columns of data2 at the bottom
+st.markdown("### Columns in the Healthcare Dataset (data2):")
+st.write(data2.columns)
