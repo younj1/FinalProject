@@ -3,7 +3,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 import plotly.express as px
-import plotly.graph_objects as go
 
 # Page Configuration
 st.set_page_config(page_title="Insurance Charges Dashboard", layout="wide")
@@ -58,18 +57,10 @@ tab1, tab2, tab3, tab4 = st.tabs(["Overview", "Drivers of Cost", "Lifestyle & Ge
 with tab1:
     st.header("🚀 Overview")
     col1, col2, col3 = st.columns(3)
-    
-    # Enhanced Metrics
-    smoker_percentage = (filtered_data["smoker"].value_counts(normalize=True) * 100).to_dict()
-    col1.metric("Smokers Percentage", f"{smoker_percentage.get('yes', 0):.2f}%")
-    col2.metric("Non-Smokers Percentage", f"{smoker_percentage.get('no', 0):.2f}%")
+    col1.metric("Average Charges", f"${filtered_data['charges'].mean():,.2f}")
+    col2.metric("Total Records", len(filtered_data))
     col3.metric("Average BMI", f"{filtered_data['bmi'].mean():.2f}")
 
-    # Display Statistical Summary
-    st.markdown("### Statistical Summary")
-    st.write(filtered_data.describe())  # Show statistical summary
-
-    # Smoker vs Non-Smoker Distribution
     st.markdown("### Smoker vs. Non-Smoker Distribution")
     smoker_fig = px.pie(
         filtered_data,
@@ -92,7 +83,6 @@ with tab2:
             title="Charges vs. Age",
             labels={"charges": "Insurance Charges", "age": "Age"},
             template=template,
-            hover_data=["age", "charges", "bmi"]
         )
         st.plotly_chart(scatter_fig1)
     with col2:
@@ -104,19 +94,26 @@ with tab2:
             title="Charges vs. BMI",
             labels={"charges": "Insurance Charges", "bmi": "BMI"},
             template=template,
-            hover_data=["bmi", "charges"]
         )
         st.plotly_chart(scatter_fig2)
 
     # Correlation Heatmap: Numeric Features
     st.markdown("### Correlation Heatmap: Numeric Features")
     correlation_matrix = filtered_data.select_dtypes(include=["float64", "int64"]).corr()
+
+    # Convert the correlation matrix to a NumPy array
+    correlation_matrix_array = correlation_matrix.to_numpy()
+
+    # Use px.imshow to plot the heatmap correctly
     fig = px.imshow(
-        correlation_matrix,
+        correlation_matrix_array,
         color_continuous_scale="coolwarm",
         title="Correlation Heatmap",
-        labels={'x': 'Features', 'y': 'Features'}
+        labels={'x': 'Features', 'y': 'Features'},
+        x=correlation_matrix.columns,
+        y=correlation_matrix.index
     )
+
     st.plotly_chart(fig)
 
 # Tab 3: Lifestyle & Geography
@@ -146,7 +143,7 @@ with tab3:
     )
     st.plotly_chart(stacked_bar)
 
-    # Charges by BMI Category
+    st.markdown("### Charges by BMI Category")
     filtered_data["BMI Category"] = pd.cut(
         filtered_data["bmi"],
         bins=[0, 18.5, 24.9, 29.9, 100],
@@ -186,18 +183,6 @@ with tab4:
     ax.set_title("Average Charges by Region and BMI Category")
     st.pyplot(fig)
 
-    # Add a Choropleth Map for Regional Insights (Optional)
-    st.markdown("### Regional Charges Map")
-    map_fig = px.choropleth(
-        filtered_data,
-        locations="region",
-        color="charges",
-        hover_name="region",
-        color_continuous_scale="Viridis",
-        title="Regional Insurance Charges"
-    )
-    st.plotly_chart(map_fig)
-
     st.markdown("### Grouped Bar Chart: Average Charges by Children and Smoker Status")
     grouped_data = filtered_data.groupby(["children", "smoker"])["charges"].mean().reset_index()
     grouped_bar = px.bar(
@@ -216,14 +201,14 @@ with tab4:
     filtered_data["Age Group"] = pd.cut(
         filtered_data["age"],
         bins=[18, 35, 50, 65, 100],
-        labels=["Young Adults (18-35)", "Middle-Aged (36-50)", "Older Adults (51-65)", "Seniors (66+)"],
+        labels=["Young Adults (18-35)", "Middle-Aged (36-50)", "Older Adults (51-65)", "Seniors (65+)"],
     )
-    age_group_fig = px.box(
+    age_group_bar = px.box(
         filtered_data,
         x="Age Group",
         y="charges",
         color="Age Group",
-        title="Charges by Age Group",
+        title="Charges Distribution by Age Group",
         template=template,
     )
-    st.plotly_chart(age_group_fig)
+    st.plotly_chart(age_group_bar)
