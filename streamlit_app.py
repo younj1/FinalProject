@@ -74,7 +74,7 @@ with tab1:
     if include_smokers:
         color_map = {"yes": "red", "no": "red"}
     else:
-        color_map = {"yes": "blue", "no": "blue"}
+        color_map = {"yes": "red", "no": "blue"}
     
     smoker_fig = px.pie(
         filtered_data,
