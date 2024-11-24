@@ -72,9 +72,9 @@ with tab1:
     
     # Define color scheme based on the checkbox
     if include_smokers:
-        color_map = {"yes": "red", "no": "gray"}
+        color_map = {"yes": "red", "no": "red"}
     else:
-        color_map = {"yes": "blue", "no": "green"}
+        color_map = {"yes": "blue", "no": "blue"}
     
     smoker_fig = px.pie(
         filtered_data,
