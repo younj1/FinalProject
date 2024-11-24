@@ -171,6 +171,9 @@ with tab4:
     heatmap_data = filtered_data.pivot_table(
         values="charges", index="region", columns="BMI Category", aggfunc="mean", fill_value=0
     )
+    # Fill NaN values with 0 in case any combination of Region and BMI Category doesn't exist
+    heatmap_data = heatmap_data.fillna(0)
+    
     fig, ax = plt.subplots(figsize=(10, 6))
     sns.heatmap(heatmap_data, cmap="YlGnBu", annot=True, fmt=".2f", ax=ax)
     ax.set_title("Average Charges by Region and BMI Category")
