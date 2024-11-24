@@ -11,6 +11,7 @@ st.set_page_config(page_title="Insurance Charges Dashboard", layout="wide")
 @st.cache_data
 def load_data():
     return pd.read_csv("https://raw.githubusercontent.com/rafiky1/ccd/refs/heads/main/insurance.csv")
+    return pd.read_csv("https://raw.githubusercontent.com/younj1/FinalProject/refs/heads/main/healthcare_dataset.csv")
 
 data = load_data()
 
