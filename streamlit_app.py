@@ -19,24 +19,30 @@ def load_data():
 # Load the datasets
 data1, data2 = load_data()
 
+# Merge data1 and data2 on common features (assuming 'patient_id' is the shared column, adjust as needed)
+# If there's no shared column, we can combine them based on matching index or other columns
+data = data1.copy()
+data["health_condition"] = data2["health_condition"]  # Add health condition from data2
+data["education"] = data2["education"]  # Add other features like education from data2
+
 # Sidebar
 with st.sidebar:
     st.title("🔍 Filters")
     
     selected_region = st.multiselect(
-        "Filter by Region", data1["region"].unique(), default=data1["region"].unique()
+        "Filter by Region", data["region"].unique(), default=data["region"].unique()
     )
     
     # Include Smokers Only checkbox
     include_smokers = st.checkbox("Include Smokers Only", value=False)
     include_nonsmokers = st.checkbox("Include Non-Smokers Only", value=False)
     
-    bmi_range = st.slider("Select BMI Range", min_value=int(data1['bmi'].min()), max_value=int(data1['bmi'].max()), value=(18, 30))
-    age_range = st.slider("Age Range", int(data1["age"].min()), int(data1["age"].max()), (18, 60))
+    bmi_range = st.slider("Select BMI Range", min_value=int(data['bmi'].min()), max_value=int(data['bmi'].max()), value=(18, 30))
+    age_range = st.slider("Age Range", int(data["age"].min()), int(data["age"].max()), (18, 60))
     theme = st.radio("Choose Theme", ["Light Theme", "Dark Theme"], index=0)
 
 # Apply Filters
-filtered_data = data1[data1["region"].isin(selected_region)]
+filtered_data = data[data["region"].isin(selected_region)]
 
 # Handle Smoker and Non-Smoker Filters
 if include_smokers and include_nonsmokers:
@@ -91,7 +97,7 @@ with tab1:
 
     # Move the table to the bottom of the tab
     st.markdown("### Data Sample")
-    st.dataframe(filtered_data[['age', 'bmi', 'charges', 'smoker', 'region']].head(10), height=400)
+    st.dataframe(filtered_data[['age', 'bmi', 'charges', 'smoker', 'region', 'health_condition', 'education']].head(10), height=400)
 
 # Tab 2: Drivers of Cost
 with tab2:
@@ -106,7 +112,7 @@ with tab2:
             title=f"Charges vs. Age ({len(filtered_data)} records)",
             labels={"charges": "Insurance Charges", "age": "Age"},
             template=template,
-            hover_data=["age", "charges"]
+            hover_data=["age", "charges", "health_condition"]
         )
         st.plotly_chart(scatter_fig1)
     with col2:
@@ -118,7 +124,7 @@ with tab2:
             title=f"Charges vs. BMI ({len(filtered_data)} records)",
             labels={"charges": "Insurance Charges", "bmi": "BMI"},
             template=template,
-            hover_data=["bmi", "charges"]
+            hover_data=["bmi", "charges", "health_condition"]
         )
         st.plotly_chart(scatter_fig2)
 
@@ -147,17 +153,17 @@ with tab2:
 # Tab 3: Lifestyle & Geography
 with tab3:
     st.header("💡 Lifestyle Choices and Insurance Costs")
-    st.markdown("### Charges by Number of Children")
-    children_bar = px.bar(
+    st.markdown("### Charges by Health Condition")
+    health_condition_bar = px.bar(
         filtered_data,
-        x="children",
+        x="health_condition",
         y="charges",
-        color="children",
-        title=f"Charges by Number of Children ({len(filtered_data)} records)",
-        labels={"children": "Number of Children", "charges": "Insurance Charges"},
+        color="health_condition",
+        title=f"Charges by Health Condition ({len(filtered_data)} records)",
+        labels={"health_condition": "Health Condition", "charges": "Insurance Charges"},
         template=template,
     )
-    st.plotly_chart(children_bar)
+    st.plotly_chart(health_condition_bar)
 
     st.markdown("### Stacked Bar Chart: Charges by Region and Smoker Status")
     stacked_bar = px.bar(
