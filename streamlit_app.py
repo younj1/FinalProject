@@ -65,7 +65,7 @@ with tab1:
     smoker_fig = px.pie(
         filtered_data,
         names="smoker",
-        title="Smoker vs. Non-Smoker Distribution",
+        title=f"Smoker vs. Non-Smoker Distribution ({len(filtered_data)} records)",
         template=template,
     )
     st.plotly_chart(smoker_fig)
@@ -80,9 +80,10 @@ with tab2:
             x="age",
             y="charges",
             color="smoker",
-            title="Charges vs. Age",
+            title=f"Charges vs. Age ({len(filtered_data)} records)",
             labels={"charges": "Insurance Charges", "age": "Age"},
             template=template,
+            hover_data=["age", "charges"]
         )
         st.plotly_chart(scatter_fig1)
     with col2:
@@ -91,9 +92,10 @@ with tab2:
             x="bmi",
             y="charges",
             color="smoker",
-            title="Charges vs. BMI",
+            title=f"Charges vs. BMI ({len(filtered_data)} records)",
             labels={"charges": "Insurance Charges", "bmi": "BMI"},
             template=template,
+            hover_data=["bmi", "charges"]
         )
         st.plotly_chart(scatter_fig2)
 
@@ -112,6 +114,11 @@ with tab2:
             aspect="auto"
         )
         st.plotly_chart(fig)
+
+        # Display correlation insights
+        correlation_description = correlation_matrix.unstack().sort_values(ascending=False)
+        st.markdown("### Top 5 Correlations")
+        st.write(correlation_description.head())
     except ValueError as e:
         st.error(f"Error generating the heatmap: {e}")
 
@@ -124,7 +131,7 @@ with tab3:
         x="children",
         y="charges",
         color="children",
-        title="Charges by Number of Children",
+        title=f"Charges by Number of Children ({len(filtered_data)} records)",
         labels={"children": "Number of Children", "charges": "Insurance Charges"},
         template=template,
     )
