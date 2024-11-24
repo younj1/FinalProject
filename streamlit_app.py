@@ -24,7 +24,6 @@ with st.sidebar:
     include_nonsmokers = st.checkbox("Include Non-Smokers Only", value=False)
     bmi_range = st.slider("Select BMI Range", min_value=int(data['bmi'].min()), max_value=int(data['bmi'].max()), value=(18, 30))
     age_range = st.slider("Age Range", int(data["age"].min()), int(data["age"].max()), (18, 60))
-    gender = st.selectbox("Select Gender", ["All", "Male", "Female"])
     theme = st.radio("Choose Theme", ["Light Theme", "Dark Theme"], index=0)
 
 # Apply Filters
@@ -43,10 +42,6 @@ filtered_data = filtered_data[(filtered_data['bmi'] >= bmi_range[0]) & (filtered
 
 # Filter by age range
 filtered_data = filtered_data[(filtered_data["age"] >= age_range[0]) & (filtered_data["age"] <= age_range[1])]
-
-# Filter by gender if selected
-if gender != "All":
-    filtered_data = filtered_data[filtered_data["sex"] == gender]
 
 # Set Theme
 template = "plotly_white" if theme == "Light Theme" else "plotly_dark"
